@@ -33,10 +33,10 @@ sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
 # Extract some data
 lag_data <- sparklyr::spark_read_json(
   sc,
-  "std_data",
+  "lag_data",
   path = system.file(
     "data_raw/lag_data.json",
-    package = "testsml"
+    package = "sparkts"
   )
 ) \%>\%
   sparklyr::spark_dataframe()

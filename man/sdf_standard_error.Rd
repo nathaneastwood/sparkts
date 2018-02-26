@@ -33,7 +33,7 @@ std_data <- sparklyr::spark_read_json(
   "std_data",
   path = system.file(
     "data_raw/StandardErrorDataIn.json",
-    package = "testsml"
+    package = "sparkts"
   )
 ) \%>\%
   sparklyr::spark_dataframe()
