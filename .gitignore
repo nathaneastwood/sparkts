@@ -3,3 +3,4 @@
 .RData
 derby.log
 /logs
+.DS_Store
