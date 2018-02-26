@@ -7,8 +7,7 @@ Depends:
   R (>= 3.4.2),
   sparklyr
 Imports:
-  dplyr,
-  magrittr
+  dplyr
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true

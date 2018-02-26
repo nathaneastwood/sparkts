@@ -26,7 +26,7 @@
 #'   sparklyr::spark_dataframe()
 #'
 #' # Calculate the lag
-#' output <- spark_lag(
+#' output <- sdf_lag(
 #'   sc,
 #'   data = lag_data,
 #'   partition_cols = "id",
@@ -45,7 +45,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-spark_lag <- function(
+sdf_lag <- function(
   sc, data, partition_cols, order_cols, target_col, lag_num
 ) {
 

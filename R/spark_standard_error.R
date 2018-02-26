@@ -26,7 +26,7 @@
 #'   sparklyr::spark_dataframe()
 #'
 #' # Calculate the standard error
-#' output <- spark_standard_error(
+#' output <- sdf_standard_error(
 #'   sc,
 #'   std_data,
 #'   x_col = "xColumn",
@@ -45,7 +45,7 @@
 #' @importFrom dplyr collect %>%
 #'
 #' @export
-spark_standard_error <- function(
+sdf_standard_error <- function(
   sc, data, x_col, y_col, z_col, new_column_name
 ) {
 
