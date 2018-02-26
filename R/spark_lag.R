@@ -29,10 +29,10 @@
 #' output <- sdf_lag(
 #'   sc,
 #'   data = lag_data,
-#'   partition_cols = "id",
-#'   order_cols = "t",
-#'   target_col = "v",
-#'   lag_num = 2L
+#'   partition_cols = as.list(ensure_scala_character("id")),
+#'   order_cols = as.list(ensure_scala_character("t")),
+#'   target_col = ensure_scala_character("v"),
+#'   lag_num = ensure_scala_integer(2L)
 #' )
 #'
 #' # Extract the standard error column
