@@ -58,10 +58,10 @@ sdf_standard_error <- function(
     invoke(
       method = "stdErr1",
       df = data,
-      xCol = ensure_scalar_character(x_col),
-      yCol = ensure_scalar_character(y_col),
-      zCol = ensure_scalar_character(z_col),
-      newColName = ensure_scalar_character(new_column_name)
+      xCol = x_col,
+      yCol = y_col,
+      zCol = z_col,
+      newColName = new_column_name
     )
 
 }
