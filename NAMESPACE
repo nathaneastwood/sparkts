@@ -2,7 +2,9 @@
 
 export(sdf_lag)
 export(sdf_standard_error)
+export(sdf_standard_error_r6)
 import(sparklyr)
+importFrom(R6,R6Class)
 importFrom(dplyr,"%>%")
 importFrom(dplyr,collect)
 importFrom(sparklyr,invoke)
