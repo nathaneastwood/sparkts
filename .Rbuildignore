@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 ^.*\.log$
 /logs
+^\.travis\.yml$
+^codecov\.yml$
+^README\.Rmd$
+^README-.*\.png$
