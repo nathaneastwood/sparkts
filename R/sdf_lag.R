@@ -1,14 +1,31 @@
 #' Calculate lag
 #'
-#' @param sc A \code{spark_connection}.
-#' @param data The Spark \code{DataFrame} on which to perform the function.
-#' @param partition_cols list(string): List of column(s) to partition on
-#' @param order_cols list(string): List of column(s) to order on
-#' @param target_col list(string): Column name to create a window over
-#' @param lag_num Integer: The number of rows back from the current row from
-#'   which to obtain a value
+#' @section Usage:
+#' \preformatted{
+#'   p <- sdf_lag$new(sc, data)
+#'   p$lag(
+#'     data = NULL, partition_cols, order_cols, target_col, lag_num
+#'   )
+#' }
 #'
-#' @return \code{sql.DataFrame}: The DataFrame returned
+#' @section Arguments:
+#' \describe{
+#'   \item{p}{An \code{sdf_melt} object.}
+#'   \item{sc}{A \code{spark_connection}.}
+#'   \item{data}{The Spark \code{DataFrame} on which to perform the function.}
+#'   \item{partition_cols}{list(string). List of column(s) to partition on.}
+#'   \item{order_cols}{list(string). List of column(s) to order on.}
+#'   \item{target_col}{list(string). Column name to create a window over.}
+#'   \item{lag_num}{Integer. The number of rows back from the current row from
+#'     which to obtain a value.}
+#' }
+#'
+#' @section Details:
+#' \code{$new()} instantiates the class.
+#'
+#' \code{$lag()} calls the lag function.
+#'
+#' @return A \code{data.frame}.
 #'
 #' @examples
 #' # Set up a spark connection
@@ -25,41 +42,56 @@
 #' ) %>%
 #'   sparklyr::spark_dataframe()
 #'
-#' # Calculate the lag
-#' output <- sdf_lag(
-#'   sc,
-#'   data = lag_data,
-#'   partition_cols = as.list(ensure_scala_character("id")),
-#'   order_cols = as.list(ensure_scala_character("t")),
-#'   target_col = ensure_scala_character("v"),
-#'   lag_num = ensure_scala_integer(2L)
-#' )
+#' # Instantiate the class
+#' p <- sdf_lag$new(sc = sc, data = lag_data)
 #'
-#' # Extract the standard error column
-#' output <- output %>% dplyr::collect()
-#' output
+#' # Calculate the lag
+#' p$lag(
+#'   partition_cols = list("id"),
+#'   order_cols = list("t"),
+#'   target_col = "v",
+#'   lag_num = 2L
+#' )
 #'
 #' sparklyr::spark_disconnect(sc = sc)
 #'
-#' @importFrom sparklyr invoke_static invoke
-#' @importFrom dplyr %>%
+#' @name sdf_lag
 #'
 #' @export
-sdf_lag <- function(
-  sc, data, partition_cols, order_cols, target_col, lag_num
-) {
+NULL
 
-  invoke_static(
-    sc,
-    class = "com.ons.sml.businessMethods.methods.Lag",
-    method = "lag",
-    df = data
-  ) %>%
-    invoke(
-      method = "lagFunc",
-      df = data,
-      partitionCols = partition_cols, orderCols = order_cols,
-      targetCol = target_col, lagNum = lag_num
-    )
+#' @importFrom R6 R6Class
+#' @importFrom sparklyr invoke_static invoke
+sdf_lag <- R6::R6Class(
+  "sdf_lag",
+  inherit = utils,
+  public = list(
+    initialize = function(sc, data) {
+      init <- invoke_static(
+        sc = sc,
+        class = "com.ons.sml.businessMethods.methods.Lag",
+        method = "lag",
+        df = data
+      )
+      private$init <- init
+    },
+    lag = function(
+      data = NULL, partition_cols, order_cols, target_col, lag_num
+    ) {
+      private$init %>%
+        invoke(
+          method = "lagFunc",
+          df = data,
+          partitionCols = partition_cols,
+          orderCols = order_cols,
+          targetCol = target_col,
+          lagNum = lag_num
+        ) %>%
+        private$collect()
+    }
+  ),
+  private = list(
+    init = NULL
+  )
+)
 
-}

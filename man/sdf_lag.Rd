@@ -3,29 +3,43 @@
 \name{sdf_lag}
 \alias{sdf_lag}
 \title{Calculate lag}
-\usage{
-sdf_lag(sc, data, partition_cols, order_cols, target_col, lag_num)
-}
-\arguments{
-\item{sc}{A \code{spark_connection}.}
-
-\item{data}{The Spark \code{DataFrame} on which to perform the function.}
-
-\item{partition_cols}{list(string): List of column(s) to partition on}
-
-\item{order_cols}{list(string): List of column(s) to order on}
-
-\item{target_col}{list(string): Column name to create a window over}
-
-\item{lag_num}{Integer: The number of rows back from the current row from
-which to obtain a value}
-}
 \value{
-\code{sql.DataFrame}: The DataFrame returned
+A \code{data.frame}.
 }
 \description{
 Calculate lag
 }
+\section{Usage}{
+
+\preformatted{
+  p <- sdf_lag$new(sc, data)
+  p$lag(
+    data = NULL, partition_cols, order_cols, target_col, lag_num
+  )
+}
+}
+
+\section{Arguments}{
+
+\describe{
+  \item{p}{An \code{sdf_melt} object.}
+  \item{sc}{A \code{spark_connection}.}
+  \item{data}{The Spark \code{DataFrame} on which to perform the function.}
+  \item{partition_cols}{list(string). List of column(s) to partition on.}
+  \item{order_cols}{list(string). List of column(s) to order on.}
+  \item{target_col}{list(string). Column name to create a window over.}
+  \item{lag_num}{Integer. The number of rows back from the current row from
+    which to obtain a value.}
+}
+}
+
+\section{Details}{
+
+\code{$new()} instantiates the class.
+
+\code{$lag()} calls the lag function.
+}
+
 \examples{
 # Set up a spark connection
 sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
@@ -41,19 +55,16 @@ lag_data <- sparklyr::spark_read_json(
 ) \%>\%
   sparklyr::spark_dataframe()
 
-# Calculate the lag
-output <- sdf_lag(
-  sc,
-  data = lag_data,
-  partition_cols = as.list(ensure_scala_character("id")),
-  order_cols = as.list(ensure_scala_character("t")),
-  target_col = ensure_scala_character("v"),
-  lag_num = ensure_scala_integer(2L)
-)
+# Instantiate the class
+p <- sdf_lag$new(sc = sc, data = lag_data)
 
-# Extract the standard error column
-output <- output \%>\% dplyr::collect()
-output
+# Calculate the lag
+p$lag(
+  partition_cols = list("id"),
+  order_cols = list("t"),
+  target_col = "v",
+  lag_num = 2L
+)
 
 sparklyr::spark_disconnect(sc = sc)
 
