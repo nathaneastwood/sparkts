@@ -14,6 +14,8 @@
 #' @section Arguments:
 #' \describe{
 #'   \item{p}{An \code{sdf_melt} object.}
+#'   \item{sc}{A \code{spark_connection}.}
+#'   \item{data}{The Spark \code{DataFrame} on which to perform the function.}
 #'   \item{id_variables}{list(string). Column(s) which are used as unique
 #'     identifiers.}
 #'   \item{value_variables}{list(string). Column(s) which are being
@@ -21,7 +23,7 @@
 #'   \item{variable_name}{c(string). The name of a new column, which holds all
 #'     the \code{value_variables} names, defaulted to "variable".}
 #'   \item{value_name}{c(string). The name of a new column, which holds all the
-#'     values of \code{value_variables} column(s). Defaults to "value"}
+#'     values of \code{value_variables} column(s). Defaults to "value".}
 #' }
 #'
 #' @section Details:
@@ -48,6 +50,7 @@
 #'
 #' # Instantiate the class
 #' p <- sdf_melt$new(sc = sc, data = melt_data)
+#'
 #' # Calculate the standard errors
 #' p$melt_1(
 #'   id_variables = list("identifier", "date"),
@@ -56,12 +59,15 @@
 #'   value_name = "turnover"
 #' )
 #'
+#' sparklyr::spark_disconnect(sc = sc)
+#'
 #' @name sdf_melt
 #'
 #' @export
 NULL
 
 #' @importFrom R6 R6Class
+#' @importFrom sparklyr invoke_static invoke
 sdf_melt <- R6::R6Class(
   "sdf_melt",
   inherit = utils,

@@ -3,6 +3,9 @@
 \name{sdf_standard_error}
 \alias{sdf_standard_error}
 \title{Calculate the standard error}
+\value{
+A \code{data.frame}.
+}
 \description{
 This function will add an extra column on to a Spark DataFrame containing the
 standard error.
@@ -19,6 +22,8 @@ standard error.
 
 \describe{
   \item{p}{An \code{sdf_standard_error} object.}
+  \item{sc}{A \code{spark_connection}.}
+  \item{data}{The Spark \code{DataFrame} on which to perform the function.}
   \item{x_col}{A string. The column to be used as X in the calculation.}
   \item{y_col}{A string. The column to be used as Y in the calculation.}
   \item{z_col}{A string. The column to be used as Z in the calculation.}
@@ -52,6 +57,7 @@ std_data <- sparklyr::spark_read_json(
 
 # Instantiate the class
 p <- sdf_standard_error$new(sc = sc, data = std_data)
+
 # Calculate the standard errors
 p$standard_error(
   x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",

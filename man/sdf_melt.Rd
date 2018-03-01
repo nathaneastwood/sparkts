@@ -7,8 +7,8 @@
 A \code{data.frame}.
 }
 \description{
-This function will add an extra column on to a Spark DataFrame containing the
-standard error.
+This method will take a sequence of column names (strings) and unpivots them
+into two columns, the "variable_name" and its values.
 }
 \section{Usage}{
 
@@ -24,6 +24,8 @@ standard error.
 
 \describe{
   \item{p}{An \code{sdf_melt} object.}
+  \item{sc}{A \code{spark_connection}.}
+  \item{data}{The Spark \code{DataFrame} on which to perform the function.}
   \item{id_variables}{list(string). Column(s) which are used as unique
     identifiers.}
   \item{value_variables}{list(string). Column(s) which are being
@@ -31,7 +33,7 @@ standard error.
   \item{variable_name}{c(string). The name of a new column, which holds all
     the \code{value_variables} names, defaulted to "variable".}
   \item{value_name}{c(string). The name of a new column, which holds all the
-    values of \code{value_variables} column(s). Defaults to "value"}
+    values of \code{value_variables} column(s). Defaults to "value".}
 }
 }
 
@@ -59,6 +61,7 @@ melt_data <- sparklyr::spark_read_json(
 
 # Instantiate the class
 p <- sdf_melt$new(sc = sc, data = melt_data)
+
 # Calculate the standard errors
 p$melt_1(
   id_variables = list("identifier", "date"),
@@ -66,5 +69,7 @@ p$melt_1(
   variable_name = "variable",
   value_name = "turnover"
 )
+
+sparklyr::spark_disconnect(sc = sc)
 
 }

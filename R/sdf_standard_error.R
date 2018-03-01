@@ -12,6 +12,8 @@
 #' @section Arguments:
 #' \describe{
 #'   \item{p}{An \code{sdf_standard_error} object.}
+#'   \item{sc}{A \code{spark_connection}.}
+#'   \item{data}{The Spark \code{DataFrame} on which to perform the function.}
 #'   \item{x_col}{A string. The column to be used as X in the calculation.}
 #'   \item{y_col}{A string. The column to be used as Y in the calculation.}
 #'   \item{z_col}{A string. The column to be used as Z in the calculation.}
@@ -25,7 +27,7 @@
 #' \code{$standard_error()} calculates the standard error and returns a
 #'   \code{data.frame}.
 #'
-#' @importFrom R6 R6Class
+#' @return A \code{data.frame}.
 #'
 #' @examples
 #' # Set up a spark connection
@@ -44,6 +46,7 @@
 #'
 #' # Instantiate the class
 #' p <- sdf_standard_error$new(sc = sc, data = std_data)
+#'
 #' # Calculate the standard errors
 #' p$standard_error(
 #'   x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
