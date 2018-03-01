@@ -49,3 +49,33 @@ In fact, when an object is defined like this without a corresponding class, you 
 ```scala
 val utils = new StringUtils
 ```
+
+So let's say you want to create a class that has instance methods and static methods. First you define nonstatic (instance) members in your *class*, and define members that you want to appear as “static” members in an *object* that has the same name as the class, and is in the same file as the class. This object is known as a *companion* object. For example:
+
+```scala
+// Pizza class
+class Pizza (var crustType: String) {
+  override def toString = "Crust type is " + crustType
+}
+
+// companion object
+object Pizza {
+  val CRUST_TYPE_THIN = "thin" 
+  val CRUST_TYPE_THICK = "thick" 
+  def getFoo = "Foo"
+}
+```
+
+With the `Pizza` class and `Pizza` object defined in the same file (presumably named *Pizza.scala*), members of the `Pizza` object can be accessed as so:
+
+```scala
+println(Pizza.CRUST_TYPE_THIN)
+println(Pizza.getFoo)
+```
+
+You can also create a new `Pizza` instance and use it as usual:
+
+```scala
+var p = new Pizza(Pizza.CRUST_TYPE_THICK)
+println(p)
+```
