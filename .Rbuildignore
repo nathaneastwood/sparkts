@@ -1,9 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.*\.log$
-/logs
+logs/
 ^\.travis\.yml$
 ^codecov\.yml$
 ^README\.Rmd$
 ^README-.*\.png$
-README_cache
+README_cache/
