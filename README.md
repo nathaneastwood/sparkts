@@ -55,19 +55,19 @@ p <- sdf_standard_error$new(sc = sc, data = std_data)
 # Calculate the standard errors
 p$standard_error(
   x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
-  new_column_name = "test"
+  new_column_name = "StandardError"
 )
-# A tibble: 8 x 5
-  ref       xColumn yColumn zColumn  test
-  <chr>     <chr>     <dbl>   <dbl> <dbl>
-1 000000000 200         120    10.0  10.6
-2 111111111 300         220    20.0  14.1
-3 222222222 400         320    30.0  16.8
-4 333333333 500         420    40.0  19.1
-5 444444444 600         520    53.0  22.4
-6 555555555 700         620    60.0  22.9
-7 666666666 800         720    70.0  24.6
-8 777777777 900         820    80.0  26.2
+# # A tibble: 8 x 5
+#   ref       xColumn yColumn zColumn StandardError
+#   <chr>     <chr>     <dbl>   <dbl>         <dbl>
+# 1 000000000 200         120    10.0          10.6
+# 2 111111111 300         220    20.0          14.1
+# 3 222222222 400         320    30.0          16.8
+# 4 333333333 500         420    40.0          19.1
+# 5 444444444 600         520    53.0          22.4
+# 6 555555555 700         620    60.0          22.9
+# 7 666666666 800         720    70.0          24.6
+# 8 777777777 900         820    80.0          26.2
 
 sparklyr::spark_disconnect(sc = sc)
 ```
