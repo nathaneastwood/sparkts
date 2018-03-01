@@ -4,3 +4,4 @@
 derby.log
 /logs
 .DS_Store
+/README_cache

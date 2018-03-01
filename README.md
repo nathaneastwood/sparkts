@@ -14,7 +14,7 @@ Status](https://img.shields.io/codecov/c/github/nathaneastwood/sparkts/master.sv
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The goal of sparkts is to provide a test bed of `sparklyr` extensions
+The goal of `sparkts` is to provide a test bed of `sparklyr` extensions
 for the [`spark-ts`](https://github.com/srussell91/SparkTS) framework
 which was modified from the
 [`spark-timeseries`](https://github.com/sryza/spark-timeseries)
@@ -22,7 +22,7 @@ framework.
 
 ## Installation
 
-You can install sparkts from github with:
+You can install `sparkts` from GitHub with:
 
 ``` r
 # install.packages("devtools")
@@ -69,5 +69,6 @@ p$standard_error(
 # 7 666666666 800         720    70.0          24.6
 # 8 777777777 900         820    80.0          26.2
 
+# Disconnect from the spark connection
 sparklyr::spark_disconnect(sc = sc)
 ```

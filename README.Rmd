@@ -21,11 +21,11 @@ library(sparkts)
 [![Coverage Status](https://img.shields.io/codecov/c/github/nathaneastwood/sparkts/master.svg)](https://codecov.io/github/nathaneastwood/sparkts?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The goal of sparkts is to provide a test bed of `sparklyr` extensions for the [`spark-ts`](https://github.com/srussell91/SparkTS) framework which was modified from the [`spark-timeseries`](https://github.com/sryza/spark-timeseries) framework.
+The goal of `sparkts` is to provide a test bed of `sparklyr` extensions for the [`spark-ts`](https://github.com/srussell91/SparkTS) framework which was modified from the [`spark-timeseries`](https://github.com/sryza/spark-timeseries) framework.
 
 ## Installation
 
-You can install sparkts from github with:
+You can install `sparkts` from GitHub with:
 
 ```{r installation, eval = FALSE}
 # install.packages("devtools")
@@ -36,7 +36,7 @@ devtools::install_github("nathaneastwood/sparkts")
 
 This is a basic example which shows you how to calculate the standard error for some time series data:
 
-```{r example}
+```{r example, cache = TRUE}
 # Set up a spark connection
 sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
 
@@ -60,5 +60,6 @@ p$standard_error(
   new_column_name = "StandardError"
 )
 
+# Disconnect from the spark connection
 sparklyr::spark_disconnect(sc = sc)
 ```
