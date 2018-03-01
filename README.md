@@ -49,21 +49,25 @@ std_data <- sparklyr::spark_read_json(
 ) %>%
   sparklyr::spark_dataframe()
 
-# Calculate the standard error
-output <- sdf_standard_error(
-  sc,
-  std_data,
-  x_col = "xColumn",
-  y_col = "yColumn",
-  z_col = "zColumn",
-  new_column_name = "stdError"
+# Instantiate the class
+p <- sdf_standard_error$new(sc = sc, data = std_data)
+
+# Calculate the standard errors
+p$standard_error(
+  x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+  new_column_name = "test"
 )
+# A tibble: 8 x 5
+  ref       xColumn yColumn zColumn  test
+  <chr>     <chr>     <dbl>   <dbl> <dbl>
+1 000000000 200         120    10.0  10.6
+2 111111111 300         220    20.0  14.1
+3 222222222 400         320    30.0  16.8
+4 333333333 500         420    40.0  19.1
+5 444444444 600         520    53.0  22.4
+6 555555555 700         620    60.0  22.9
+7 666666666 800         720    70.0  24.6
+8 777777777 900         820    80.0  26.2
 
-# Extract the standard error column
-output <- output %>% dplyr::collect()
-output[["stdError"]]
-[1] 10.58512 14.11569 16.79678 19.07034 22.35173 22.91944 24.61259 26.19433
-
-# Disconnect the spark session
 sparklyr::spark_disconnect(sc = sc)
 ```
