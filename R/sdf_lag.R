@@ -47,7 +47,6 @@
 #'
 #' # Calculate the lag
 #' p$lag(
-#'   sc,
 #'   partition_cols = "id",
 #'   order_cols = "t",
 #'   target_col = "v",
@@ -67,24 +66,28 @@ sdf_lag <- R6::R6Class(
   "sdf_lag",
   inherit = utils,
   public = list(
+    sc = NULL,
+    data = NULL,
     initialize = function(sc, data) {
+      self$sc <- sc
+      self$data <- data
       init <- invoke_static(
-        sc = sc,
+        sc = self$sc,
         class = "com.ons.sml.businessMethods.methods.Lag",
         method = "lag",
-        df = data
+        df = self$data
       )
       private$init <- init
     },
     lag = function(
-      sc, data = NULL, partition_cols, order_cols, target_col, lag_num
+      data = NULL, partition_cols, order_cols, target_col, lag_num
     ) {
       private$init %>%
         invoke(
           method = "lagFunc",
           df = data,
-          partitionCols = scala_list(sc, partition_cols),
-          orderCols = scala_list(sc, order_cols),
+          partitionCols = scala_list(self$sc, partition_cols),
+          orderCols = scala_list(self$sc, order_cols),
           targetCol = target_col,
           lagNum = lag_num
         ) %>%

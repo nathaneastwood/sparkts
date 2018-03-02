@@ -60,7 +60,6 @@ p <- sdf_lag$new(sc = sc, data = lag_data)
 
 # Calculate the lag
 p$lag(
-  sc,
   partition_cols = "id",
   order_cols = "t",
   target_col = "v",
