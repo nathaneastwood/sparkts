@@ -1,6 +1,6 @@
 Package: sparkts
 Title: Test Case of the spark-ts Package
-Version: 0.0.0.9000
+Version: 0.0.2
 Authors@R: 
     person("Nathan", "Eastwood", email = "nathan.eastwood@icloud.com", 
            role = c("aut", "cre"))
