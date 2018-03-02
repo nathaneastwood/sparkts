@@ -6,3 +6,17 @@ utils <- R6::R6Class(
     }
   )
 )
+
+scala_list <- function(sc, x) {
+  al <- invoke_new(sc, "java.util.ArrayList")
+  lapply(
+    x,
+    FUN = function(y) {
+      invoke(al, "add", y)
+    }
+  )
+
+  invoke_static(sc, "scala.collection.JavaConversions", "asScalaBuffer", al) %>%
+    invoke("toSeq") %>%
+    invoke("toList")
+}

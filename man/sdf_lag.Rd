@@ -25,9 +25,9 @@ Calculate lag
   \item{p}{An \code{sdf_melt} object.}
   \item{sc}{A \code{spark_connection}.}
   \item{data}{The Spark \code{DataFrame} on which to perform the function.}
-  \item{partition_cols}{list(string). List of column(s) to partition on.}
-  \item{order_cols}{list(string). List of column(s) to order on.}
-  \item{target_col}{list(string). Column name to create a window over.}
+  \item{partition_cols}{c(String). A vector of column(s) to partition on.}
+  \item{order_cols}{c(String). A vector of column(s) to order on.}
+  \item{target_col}{String. Column name to create a window over.}
   \item{lag_num}{Integer. The number of rows back from the current row from
     which to obtain a value.}
 }
@@ -60,8 +60,9 @@ p <- sdf_lag$new(sc = sc, data = lag_data)
 
 # Calculate the lag
 p$lag(
-  partition_cols = list("id"),
-  order_cols = list("t"),
+  sc,
+  partition_cols = "id",
+  order_cols = "t",
   target_col = "v",
   lag_num = 2L
 )

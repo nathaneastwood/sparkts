@@ -26,6 +26,21 @@ When passing an R `list` over to Scala, we get a Scala `ArrayType` and there is 
 2. Use overloading, which allows us to define methods of same name but having different parameters or data types, though this [has issues](https://stackoverflow.com/questions/2510108/why-avoid-method-overloading). For an example of how this works, see [this link](https://www.javatpoint.com/scala-method-overloading).
 3. Define a new Scala method for the same class that is called from R, which effectively invokes the `toList` function on the `ArrayType` and then calls the existing Scala method.
 
+We can create Java `ArrayList`s in the Spark environment using the following code:
+
+```r
+# map some R vector `x` to a java ArrayList
+al <- invoke_new(sc, "java.util.ArrayList")
+lapply(x, FUN = function(y){invoke(al, "add", y)})
+```
+
+Note we don't need to reassign the results of the `lapply` because it is adding values to the Scala `List` in the JVM. We can then convert this code to a Scala `List` using:
+
+```r
+invoke_static(sc, "scala.collection.JavaConversions", "asScalaBuffer", al) %>%
+  invoke("toSeq") %>%
+  invoke("toList")
+```
 
 ## What is a `static` method?
 
