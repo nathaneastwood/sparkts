@@ -64,8 +64,8 @@ p <- sdf_melt$new(sc = sc, data = melt_data)
 
 # Calculate the standard errors
 p$melt_1(
-  id_variables = list("identifier", "date"),
-  value_variables = list("two", "one", "three", "four"),
+  id_variables = c("identifier", "date"),
+  value_variables = c("two", "one", "three", "four"),
   variable_name = "variable",
   value_name = "turnover"
 )

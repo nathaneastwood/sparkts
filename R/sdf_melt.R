@@ -53,8 +53,8 @@
 #'
 #' # Calculate the standard errors
 #' p$melt_1(
-#'   id_variables = list("identifier", "date"),
-#'   value_variables = list("two", "one", "three", "four"),
+#'   id_variables = c("identifier", "date"),
+#'   value_variables = c("two", "one", "three", "four"),
 #'   variable_name = "variable",
 #'   value_name = "turnover"
 #' )
@@ -72,24 +72,28 @@ sdf_melt <- R6::R6Class(
   "sdf_melt",
   inherit = utils,
   public = list(
+    sc = NULL,
+    data = NULL,
     initialize = function(sc, data) {
+      self$sc <- sc
+      self$data <- data
       init <- invoke_static(
-        sc = sc,
+        sc = self$sc,
         class = "com.ons.sml.businessMethods.methods.Melt",
         method = "melt",
-        df = data
+        df = self$data
       )
       private$init <- init
     },
     melt_1 = function(
-      data = NULL, id_variables, value_variables, variable_name, value_name
+      data = self$data, id_variables, value_variables, variable_name, value_name
     ) {
       private$init %>%
         invoke(
           method = "melt1",
           dfIn = data,
-          id_vars = id_variables,
-          value_vars = value_variables,
+          id_vars = scala_seq(self$sc, id_variables),
+          value_vars = scala_seq(self$sc, value_variables),
           var_name = variable_name,
           value_name = value_name
         ) %>%
