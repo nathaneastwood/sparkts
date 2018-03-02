@@ -2,6 +2,8 @@ context("sdf-standard-error")
 
 test_that("the standard error calculations are as expected", {
 
+  library(sparkts)
+
   # Create the connection to a local spark cluster
   sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
 
@@ -16,18 +18,14 @@ test_that("the standard error calculations are as expected", {
   ) %>%
     sparklyr::spark_dataframe()
 
-  # Run the function
-  output <- sdf_standard_error(
-    sc,
-    std_data,
-    x_col = "xColumn",
-    y_col = "yColumn",
-    z_col = "zColumn",
-    new_column_name = "stdError"
-  )
+  # Instantiate the class
+  p <- sdf_standard_error$new(sc = sc, data = std_data)
 
-  # Extract the standard error column
-  output <- output %>% dplyr::collect()
+  # Calculate the standard errors
+  output <- p$standard_error(
+    x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+    new_column_name = "StandardError"
+  )
 
   # Test the expectation
   expect_identical(
@@ -35,7 +33,7 @@ test_that("the standard error calculations are as expected", {
     expected_sdf_standard_error %>% dplyr::select(-dplyr::contains("Error"))
   )
   expect_equivalent(
-    output[["stdError"]],
+    output[["StandardError"]],
     expected_sdf_standard_error[["stdError"]]
   )
 
