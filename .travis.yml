@@ -5,20 +5,8 @@ sudo: false
 cache:
   packages: true
 
-warnings_are_errors: true
-
-jdk:
-  - oraclejdk8
-
 r_packages:
   - covr
 
-env:
-  - SPARK_VERSION="2.1.0"
-
-script:
-  - |
-    R CMD build .
-    R CMD check --no-build-vignettes --no-manual --no-tests sparklyr*tar.gz
-    export SPARKLYR_LOG_FILE=/tmp/sparklyr.log
-    travis_wait 35 Rscript -e 'covr::codecov()'
+after_success:
+  - Rscript -e 'library(covr); codecov()'
