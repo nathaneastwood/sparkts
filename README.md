@@ -44,9 +44,9 @@ sparklyr::install_spark(version = "2.1.0")
 ```
 
 Then opening the `sparkts.Rproj` file will give you access to the Build
-tab from which you can “Install and Restart” (or Ctrl + Shift + B / Cmd
-+ Shift + B). This will build the package, install it, retart R and load
-the package.
+tab from which you can “Install and Restart” (or Ctrl + Shift + B for
+windows or Cmd + Shift + B for Mac). This will build the package,
+install it, retart R and load the package.
 
 ## Example
 
