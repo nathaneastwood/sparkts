@@ -35,11 +35,13 @@ If you have cloned `sparkts` and wish to `build` it, you will need:
   - RStudio
   - RTools34
 
-You will then need to run the following
-commands:
+You will then need to run the following commands (note we need the
+development version of `sparklyr` due to bugs in the version available
+from CRAN):
 
 ``` r
-install.packages(c("sparklyr", "dplyr", "R6", "devtools", "testthat", "covr"))
+install.packages(c("dplyr", "R6", "devtools", "testthat", "covr"))
+devtools::install_github("rstudio/sparklyr")
 sparklyr::install_spark(version = "2.1.0")
 ```
 
