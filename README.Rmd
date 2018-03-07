@@ -32,6 +32,21 @@ You can install `sparkts` from GitHub with:
 devtools::install_github("nathaneastwood/sparkts")
 ```
 
+If you have cloned `sparkts` and wish to `build` it, you will need:
+
+* R (>= 3.4.3)
+* RStudio
+* RTools34
+
+You will then need to run the following commands:
+
+```{r build, eval = FALSE}
+install.packages(c("sparklyr", "dplyr", "R6", "devtools", "testthat", "covr"))
+sparklyr::install_spark(version = "2.1.0")
+```
+
+Then opening the `sparkts.Rproj` file will give you access to the Build tab from which you can "Install and Restart" (or Ctrl + Shift + B / Cmd + Shift + B). This will build the package, install it, retart R and load the package.
+
 ## Example
 
 This is a basic example which shows you how to calculate the standard error for some time series data:
