@@ -42,10 +42,10 @@ Calculate lag
 
 \examples{
 # Set up a spark connection
-sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.1.0")
 
 # Extract some data
-lag_data <- sparklyr::spark_read_json(
+lag_data <- spark_read_json(
   sc,
   "lag_data",
   path = system.file(
@@ -53,7 +53,7 @@ lag_data <- sparklyr::spark_read_json(
     package = "sparkts"
   )
 ) \%>\%
-  sparklyr::spark_dataframe()
+  spark_dataframe()
 
 # Instantiate the class
 p <- sdf_lag$new(sc = sc, data = lag_data)
@@ -66,6 +66,6 @@ p$lag(
   lag_num = 2L
 )
 
-sparklyr::spark_disconnect(sc = sc)
+spark_disconnect(sc = sc)
 
 }

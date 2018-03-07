@@ -42,10 +42,10 @@ standard error.
 
 \examples{
 # Set up a spark connection
-sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.1.0")
 
 # Extract some data
-std_data <- sparklyr::spark_read_json(
+std_data <- spark_read_json(
   sc,
   "std_data",
   path = system.file(
@@ -53,7 +53,7 @@ std_data <- sparklyr::spark_read_json(
     package = "sparkts"
   )
 ) \%>\%
-  sparklyr::spark_dataframe()
+  spark_dataframe()
 
 # Instantiate the class
 p <- sdf_standard_error$new(sc = sc, data = std_data)
@@ -64,6 +64,6 @@ p$standard_error(
   new_column_name = "StandardError"
 )
 
-sparklyr::spark_disconnect(sc = sc)
+spark_disconnect(sc = sc)
 
 }

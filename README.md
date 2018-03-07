@@ -54,11 +54,13 @@ This is a basic example which shows you how to calculate the standard
 error for some time series data:
 
 ``` r
+library(sparkts)
+
 # Set up a spark connection
-sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.1.0")
 
 # Extract some data
-std_data <- sparklyr::spark_read_json(
+std_data <- spark_read_json(
   sc,
   "std_data",
   path = system.file(
@@ -66,7 +68,7 @@ std_data <- sparklyr::spark_read_json(
     package = "sparkts"
   )
 ) %>%
-  sparklyr::spark_dataframe()
+  spark_dataframe()
 
 # Instantiate the class
 p <- sdf_standard_error$new(sc = sc, data = std_data)
@@ -79,15 +81,15 @@ p$standard_error(
 # # A tibble: 8 x 5
 #   ref       xColumn yColumn zColumn StandardError
 #   <chr>     <chr>     <dbl>   <dbl>         <dbl>
-# 1 000000000 200         120    10.0          10.6
-# 2 111111111 300         220    20.0          14.1
-# 3 222222222 400         320    30.0          16.8
-# 4 333333333 500         420    40.0          19.1
-# 5 444444444 600         520    53.0          22.4
-# 6 555555555 700         620    60.0          22.9
-# 7 666666666 800         720    70.0          24.6
-# 8 777777777 900         820    80.0          26.2
+# 1 000000000 200        120.     10.          10.6
+# 2 111111111 300        220.     20.          14.1
+# 3 222222222 400        320.     30.          16.8
+# 4 333333333 500        420.     40.          19.1
+# 5 444444444 600        520.     53.          22.4
+# 6 555555555 700        620.     60.          22.9
+# 7 666666666 800        720.     70.          24.6
+# 8 777777777 900        820.     80.          26.2
 
 # Disconnect from the spark connection
-sparklyr::spark_disconnect(sc = sc)
+spark_disconnect(sc = sc)
 ```

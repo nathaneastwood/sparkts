@@ -52,11 +52,13 @@ Then opening the `sparkts.Rproj` file will give you access to the Build tab from
 This is a basic example which shows you how to calculate the standard error for some time series data:
 
 ```{r example, cache = TRUE}
+library(sparkts)
+
 # Set up a spark connection
-sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.1.0")
 
 # Extract some data
-std_data <- sparklyr::spark_read_json(
+std_data <- spark_read_json(
   sc,
   "std_data",
   path = system.file(
@@ -64,7 +66,7 @@ std_data <- sparklyr::spark_read_json(
     package = "sparkts"
   )
 ) %>%
-  sparklyr::spark_dataframe()
+  spark_dataframe()
 
 # Instantiate the class
 p <- sdf_standard_error$new(sc = sc, data = std_data)
@@ -76,5 +78,5 @@ p$standard_error(
 )
 
 # Disconnect from the spark connection
-sparklyr::spark_disconnect(sc = sc)
+spark_disconnect(sc = sc)
 ```
