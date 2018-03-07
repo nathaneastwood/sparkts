@@ -6,12 +6,6 @@ spark_dependencies <- function(spark_version, scala_version, ...) {
        package = "testsml"
      )
     ),
-      #c(
-      #system.file(
-      #  sprintf("java/sparkts-%s-%s.jar", spark_version, scala_version),
-      #  package = "sparkhello"
-      #)
-    #),
     packages = c(
     )
   )

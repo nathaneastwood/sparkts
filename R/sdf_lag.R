@@ -98,4 +98,3 @@ sdf_lag <- R6::R6Class(
     init = NULL
   )
 )
-
