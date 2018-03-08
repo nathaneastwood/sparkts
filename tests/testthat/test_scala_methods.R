@@ -1,11 +1,9 @@
-context("sdf-standard-error")
+context("scala-methods")
 
-test_that("the standard error calculations are as expected", {
+# Create the connection to a local spark cluster
+sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
 
-  library(sparkts)
-
-  # Create the connection to a local spark cluster
-  sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+test_that("Test that the standard error calculations are as expected", {
 
   # Read in the data
   std_data <- sparklyr::spark_read_json(
@@ -37,7 +35,7 @@ test_that("the standard error calculations are as expected", {
     expected_sdf_standard_error[["stdError"]]
   )
 
-  # Disconnect from the cluster
-  sparklyr::spark_disconnect(sc = sc)
-
 })
+
+# Disconnect from the cluster
+sparklyr::spark_disconnect(sc = sc)
