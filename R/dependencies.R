@@ -3,7 +3,7 @@ spark_dependencies <- function(spark_version, scala_version, ...) {
     jars = c(
      system.file(
        "java/sparkts-0.4.0-SNAPSHOT-jar-with-dependencies.jar",
-       package = "testsml"
+       package = "sparkts"
      )
     ),
     packages = c(
