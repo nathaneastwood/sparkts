@@ -2,6 +2,14 @@
 
 This document is here as a soundboard for ideas and learnings around the `sparklyr` package.
 
+## Calling Scala
+
+```r
+invoke_new()    # create new scala objects
+invoke_static() # call static methods from scala
+invoke()        # call methods from scala object
+```
+
 ## Data Types
 
 sparklyr has a function named [`sdf_schema()`](https://www.rdocumentation.org/packages/sparklyr/versions/0.7.0/topics/sdf_schema) for exploring the columns of a tibble on the R side. The return value is a list, and each element is a list with two elements, containing the name and data type of each column.
