@@ -66,6 +66,16 @@ sdf_standard_error <- R6::R6Class(
   inherit = utils,
   public = list(
     initialize = function(sc, data) {
+      stopifnot(
+        inherits(
+          sc, c("spark_connection", "spark_shell_connection", "DBIConnection")
+        )
+      )
+      stopifnot(
+        inherits(
+          data, c("spark_jobj", "shell_jobj")
+        )
+      )
       init <- invoke_static(
         sc = sc,
         class = "com.ons.sml.businessMethods.methods.StandardError",
@@ -77,6 +87,10 @@ sdf_standard_error <- R6::R6Class(
     standard_error = function(
       data = NULL, x_col, y_col, z_col, new_column_name
     ) {
+      stopifnot(is.character(x_col), length(x_col) == 1)
+      stopifnot(is.character(y_col), length(y_col) == 1)
+      stopifnot(is.character(z_col), length(z_col) == 1)
+      stopifnot(is.character(new_column_name), length(new_column_name) == 1)
       private$init %>%
         invoke(
           method = "stdErr1",
