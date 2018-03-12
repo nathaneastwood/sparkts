@@ -43,7 +43,7 @@ You will then need to run the following commands (note we need the development v
 ```{r build, eval = FALSE}
 install.packages(c("dplyr", "R6", "devtools", "testthat", "covr"))
 devtools::install_github("rstudio/sparklyr")
-sparklyr::install_spark(version = "2.1.0")
+sparklyr::install_spark(version = "2.2.0")
 ```
 
 Then opening the `sparkts.Rproj` file will give you access to the Build tab from which you can "Install and Restart" (or Ctrl + Shift + B for windows or Cmd + Shift + B for Mac). This will build the package, install it, retart R and load the package.
@@ -56,7 +56,7 @@ This is a basic example which shows you how to calculate the standard error for 
 library(sparkts)
 
 # Set up a spark connection
-sc <- spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.2.0")
 
 # Extract some data
 std_data <- spark_read_json(
@@ -69,14 +69,14 @@ std_data <- spark_read_json(
 ) %>%
   spark_dataframe()
 
-# Instantiate the class
-p <- sdf_standard_error$new(sc = sc, data = std_data)
-
-# Calculate the standard errors
-p$standard_error(
+# Call the method
+p <- sdf_standard_error(
+  sc = sc, data = std_data,
   x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
   new_column_name = "StandardError"
 )
+
+p %>% dplyr::collect()
 
 # Disconnect from the spark connection
 spark_disconnect(sc = sc)

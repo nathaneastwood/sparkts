@@ -42,7 +42,7 @@ from CRAN):
 ``` r
 install.packages(c("dplyr", "R6", "devtools", "testthat", "covr"))
 devtools::install_github("rstudio/sparklyr")
-sparklyr::install_spark(version = "2.1.0")
+sparklyr::install_spark(version = "2.2.0")
 ```
 
 Then opening the `sparkts.Rproj` file will give you access to the Build
@@ -59,7 +59,7 @@ error for some time series data:
 library(sparkts)
 
 # Set up a spark connection
-sc <- spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.2.0")
 
 # Extract some data
 std_data <- spark_read_json(
@@ -72,14 +72,14 @@ std_data <- spark_read_json(
 ) %>%
   spark_dataframe()
 
-# Instantiate the class
-p <- sdf_standard_error$new(sc = sc, data = std_data)
-
-# Calculate the standard errors
-p$standard_error(
+# Call the method
+p <- sdf_standard_error(
+  sc = sc, data = std_data,
   x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
   new_column_name = "StandardError"
 )
+
+p %>% dplyr::collect()
 # # A tibble: 8 x 5
 #   ref       xColumn yColumn zColumn StandardError
 #   <chr>     <chr>     <dbl>   <dbl>         <dbl>
