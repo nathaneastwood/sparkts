@@ -1,35 +1,20 @@
 #' Calculate lag
 #'
-#' @section Usage:
-#' \preformatted{
-#'   p <- sdf_lag$new(sc, data)
-#'   p$lag(
-#'     data = NULL, partition_cols, order_cols, target_col, lag_num
-#'   )
-#' }
+#' @param sc A \code{spark_connection}.
+#' @param data A \code{jobj}: the Spark \code{DataFrame} on which to perform the
+#'   function.
+#' @param partition_cols c(String). A vector of column(s) to partition on.
+#' @param order_cols c(String). A vector of column(s) to order on.
+#' @param target_col String. Column name to create a window over.
+#' @param lag_num Integer. The number of rows back from the current row from
+#'   which to obtain a value.
 #'
-#' @section Arguments:
-#' \describe{
-#'   \item{p}{An \code{sdf_melt} object.}
-#'   \item{sc}{A \code{spark_connection}.}
-#'   \item{data}{The Spark \code{DataFrame} on which to perform the function.}
-#'   \item{partition_cols}{c(String). A vector of column(s) to partition on.}
-#'   \item{order_cols}{c(String). A vector of column(s) to order on.}
-#'   \item{target_col}{String. Column name to create a window over.}
-#'   \item{lag_num}{Integer. The number of rows back from the current row from
-#'     which to obtain a value.}
-#' }
-#'
-#' @section Details:
-#' \code{$new()} instantiates the class.
-#'
-#' \code{$lag()} calls the lag function.
-#'
-#' @return A \code{data.frame}.
+#' @return Returns a \code{jobj}
 #'
 #' @examples
+#' \dontrun{
 #' # Set up a spark connection
-#' sc <- spark_connect(master = "local", version = "2.1.0")
+#' sc <- spark_connect(master = "local", version = "2.2.0")
 #'
 #' # Extract some data
 #' lag_data <- spark_read_json(
@@ -42,59 +27,43 @@
 #' ) %>%
 #'   spark_dataframe()
 #'
-#' # Instantiate the class
-#' p <- sdf_lag$new(sc = sc, data = lag_data)
-#'
-#' # Calculate the lag
-#' p$lag(
-#'   partition_cols = "id",
-#'   order_cols = "t",
-#'   target_col = "v",
-#'   lag_num = 2L
+#' # Call the method
+#' p <- sdf_lag(
+#'   sc = sc, data = lag_data, partition_cols = "id", order_cols = "t",
+#'   target_col = "v", lag_num = 2L
 #' )
 #'
-#' spark_disconnect(sc = sc)
+#' # Return the data to R
+#' p %>% dplyr::collect()
 #'
-#' @name sdf_lag
+#' spark_disconnect(sc = sc)
+#' }
 #'
 #' @export
-NULL
-
-#' @importFrom R6 R6Class
-#' @importFrom sparklyr invoke_static invoke
-sdf_lag <- R6::R6Class(
-  "sdf_lag",
-  inherit = utils,
-  public = list(
-    sc = NULL,
-    data = NULL,
-    initialize = function(sc, data) {
-      self$sc <- sc
-      self$data <- data
-      init <- invoke_static(
-        sc = self$sc,
-        class = "com.ons.sml.businessMethods.methods.Lag",
-        method = "lag",
-        df = self$data
-      )
-      private$init <- init
-    },
-    lag = function(
-      data = NULL, partition_cols, order_cols, target_col, lag_num
-    ) {
-      private$init %>%
-        invoke(
-          method = "lagFunc",
-          df = data,
-          partitionCols = scala_list(self$sc, partition_cols),
-          orderCols = scala_list(self$sc, order_cols),
-          targetCol = target_col,
-          lagNum = lag_num
-        ) %>%
-        private$collect()
-    }
-  ),
-  private = list(
-    init = NULL
+sdf_lag <- function(sc, data, partition_cols, order_cols, target_col, lag_num) {
+  stopifnot(
+    inherits(
+      sc, c("spark_connection", "spark_shell_connection", "DBIConnection")
+    )
   )
-)
+  stopifnot(inherits(data, c("spark_jobj", "shell_jobj")))
+  stopifnot(is.character(partition_cols))
+  stopifnot(is.character(order_cols))
+  stopifnot(is.character(target_col), length(target_col) == 1)
+  stopifnot(is.integer(lag_num), length(lag_num) == 1)
+
+  invoke_static(
+    sc = sc,
+    class = "com.ons.sml.businessMethods.methods.Lag",
+    method = "lag",
+    df = data
+  ) %>%
+    invoke(
+      method = "lagFunc",
+      df = data,
+      partitionCols = scala_list(sc, partition_cols),
+      orderCols = scala_list(sc, order_cols),
+      targetCol = target_col,
+      lagNum = lag_num
+    )
+}

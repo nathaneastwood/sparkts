@@ -4,9 +4,9 @@
 \name{sparkts-package}
 \alias{sparkts}
 \alias{sparkts-package}
-\title{A test package for calling to spakr-ts package}
+\title{A package for calling Scala methods from the spark-ts package}
 \description{
-This package acts as a test bed for learning the sparklyr API
+A package for calling Scala methods from the spark-ts package
 }
 \author{
 \strong{Maintainer}: Nathan Eastwood \email{nathan.eastwood@icloud.com}

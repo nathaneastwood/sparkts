@@ -3,46 +3,35 @@
 \name{sdf_standard_error}
 \alias{sdf_standard_error}
 \title{Calculate the standard error}
+\usage{
+sdf_standard_error(sc, data, x_col, y_col, z_col, new_column_name)
+}
+\arguments{
+\item{sc}{A \code{spark_connection}.}
+
+\item{data}{A \code{jobj}: the Spark \code{DataFrame} on which to perform the
+function.}
+
+\item{x_col}{A string. The column to be used as X in the calculation.}
+
+\item{y_col}{A string. The column to be used as Y in the calculation.}
+
+\item{z_col}{A string. The column to be used as Z in the calculation.}
+
+\item{new_column_name}{A string. This is what the standard error column is
+called, it can be defaulted to "StandardError".}
+}
 \value{
-A \code{data.frame}.
+Returns a \code{jobj}.
 }
 \description{
 This function will add an extra column on to a Spark DataFrame containing the
 standard error.
 }
-\section{Usage}{
-
-\preformatted{
-  p <- sdf_standard_error$new(sc, data)
-  p$standard_error(data = NULL, x_col, y_col, z_col, new_column_name)
-}
-}
-
-\section{Arguments}{
-
-\describe{
-  \item{p}{An \code{sdf_standard_error} object.}
-  \item{sc}{A \code{spark_connection}.}
-  \item{data}{The Spark \code{DataFrame} on which to perform the function.}
-  \item{x_col}{A string. The column to be used as X in the calculation.}
-  \item{y_col}{A string. The column to be used as Y in the calculation.}
-  \item{z_col}{A string. The column to be used as Z in the calculation.}
-  \item{new_column_name}{A string. This is what the standard error column is
-    called, it can be defaulted to "StandardError".}
-}
-}
-
-\section{Details}{
-
-\code{$new()} instantiates the class.
-
-\code{$standard_error()} calculates the standard error and returns a
-  \code{data.frame}.
-}
-
 \examples{
+\dontrun{
 # Set up a spark connection
-sc <- spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.2.0")
 
 # Extract some data
 std_data <- spark_read_json(
@@ -55,15 +44,16 @@ std_data <- spark_read_json(
 ) \%>\%
   spark_dataframe()
 
-# Instantiate the class
-p <- sdf_standard_error$new(sc = sc, data = std_data)
-
-# Calculate the standard errors
-p$standard_error(
-  x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+# Call the method
+p <- sdf_standard_error(
+  sc, std_data, x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
   new_column_name = "StandardError"
 )
 
+# Return the data to R
+p \%>\% dplyr::collect()
+
 spark_disconnect(sc = sc)
+}
 
 }

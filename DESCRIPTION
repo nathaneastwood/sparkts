@@ -1,20 +1,21 @@
 Package: sparkts
-Title: Test Case of the spark-ts Package
-Version: 0.0.2
+Title: Call Methods from the spark-ts Package
+Version: 0.0.3
 Authors@R: 
     person("Nathan", "Eastwood", email = "nathan.eastwood@icloud.com", 
            role = c("aut", "cre"))
-Description: Test how sparklyr works.
+Description: This package is used for calling Scala methods from the spark-ts 
+    package.
 Depends:
     R (>= 3.4.2),
     sparklyr
 Imports:
-    dplyr,
-    R6
+    dplyr
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 Suggests: 
-    testthat,
-    covr
+    covr,
+    lintr,
+    testthat

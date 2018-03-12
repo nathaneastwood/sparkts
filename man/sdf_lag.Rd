@@ -3,46 +3,34 @@
 \name{sdf_lag}
 \alias{sdf_lag}
 \title{Calculate lag}
+\usage{
+sdf_lag(sc, data, partition_cols, order_cols, target_col, lag_num)
+}
+\arguments{
+\item{sc}{A \code{spark_connection}.}
+
+\item{data}{A \code{jobj}: the Spark \code{DataFrame} on which to perform the
+function.}
+
+\item{partition_cols}{c(String). A vector of column(s) to partition on.}
+
+\item{order_cols}{c(String). A vector of column(s) to order on.}
+
+\item{target_col}{String. Column name to create a window over.}
+
+\item{lag_num}{Integer. The number of rows back from the current row from
+which to obtain a value.}
+}
 \value{
-A \code{data.frame}.
+Returns a \code{jobj}
 }
 \description{
 Calculate lag
 }
-\section{Usage}{
-
-\preformatted{
-  p <- sdf_lag$new(sc, data)
-  p$lag(
-    data = NULL, partition_cols, order_cols, target_col, lag_num
-  )
-}
-}
-
-\section{Arguments}{
-
-\describe{
-  \item{p}{An \code{sdf_melt} object.}
-  \item{sc}{A \code{spark_connection}.}
-  \item{data}{The Spark \code{DataFrame} on which to perform the function.}
-  \item{partition_cols}{c(String). A vector of column(s) to partition on.}
-  \item{order_cols}{c(String). A vector of column(s) to order on.}
-  \item{target_col}{String. Column name to create a window over.}
-  \item{lag_num}{Integer. The number of rows back from the current row from
-    which to obtain a value.}
-}
-}
-
-\section{Details}{
-
-\code{$new()} instantiates the class.
-
-\code{$lag()} calls the lag function.
-}
-
 \examples{
+\dontrun{
 # Set up a spark connection
-sc <- spark_connect(master = "local", version = "2.1.0")
+sc <- spark_connect(master = "local", version = "2.2.0")
 
 # Extract some data
 lag_data <- spark_read_json(
@@ -55,17 +43,16 @@ lag_data <- spark_read_json(
 ) \%>\%
   spark_dataframe()
 
-# Instantiate the class
-p <- sdf_lag$new(sc = sc, data = lag_data)
-
-# Calculate the lag
-p$lag(
-  partition_cols = "id",
-  order_cols = "t",
-  target_col = "v",
-  lag_num = 2L
+# Call the method
+p <- sdf_lag(
+  sc = sc, data = lag_data, partition_cols = "id", order_cols = "t",
+  target_col = "v", lag_num = 2L
 )
 
+# Return the data to R
+p \%>\% dplyr::collect()
+
 spark_disconnect(sc = sc)
+}
 
 }

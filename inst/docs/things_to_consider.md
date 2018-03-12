@@ -21,3 +21,7 @@ We need to ensure that the Jar we register with the `sparkts` package is built u
 
 * Should the tests be using `master = "local"`? Probably not since the packages will be running on Cloudera Data Science Workbench and CDAP. 
 * We should run tests for each version of Spark to ensure the results are what we expect.
+
+# Spark connection
+
+* How do we connect to the CDAP and CDSW Spark connections?

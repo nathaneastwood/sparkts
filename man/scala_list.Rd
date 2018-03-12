@@ -16,7 +16,9 @@ Scala List cannot be generated using sparklyr. We must generate them using
 this function.
 }
 \examples{
-sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+\dontrun{
+sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
 sparkts:::scala_list(sc, c(1, 2, 3))
 sparklyr::spark_disconnect(sc = sc)
+}
 }

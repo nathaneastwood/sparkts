@@ -1,4 +1,2 @@
-#' A test package for calling to spakr-ts package
-#'
-#' This package acts as a test bed for learning the sparklyr API
+#' A package for calling Scala methods from the spark-ts package
 "_PACKAGE"

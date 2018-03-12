@@ -1,18 +1,3 @@
-#' View the spark DataFrames
-#'
-#' This function "collects" the DataFrame in the spark connection and returns it
-#' as a tibble in R
-#'
-#' @return A tibble
-utils <- R6::R6Class(
-  "utils",
-  private = list(
-    collect = function(data) {
-      dplyr::collect(data)
-    }
-  )
-)
-
 #' Generate a Scala Seq
 #'
 #' Scala Seq (sequence) cannot be generated using sparklyr. We must generate
@@ -22,9 +7,11 @@ utils <- R6::R6Class(
 #' @param x A vector.
 #'
 #' @examples
-#' sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+#' \dontrun{
+#' sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
 #' sparkts:::scala_seq(sc, c(1, 2, 3))
 #' sparklyr::spark_disconnect(sc = sc)
+#' }
 scala_seq <- function(sc, x) {
   al <- invoke_new(sc, "java.util.ArrayList")
   lapply(
@@ -46,9 +33,11 @@ scala_seq <- function(sc, x) {
 #' @param x A vector.
 #'
 #' @examples
-#' sc <- sparklyr::spark_connect(master = "local", version = "2.1.0")
+#' \dontrun{
+#' sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
 #' sparkts:::scala_list(sc, c(1, 2, 3))
 #' sparklyr::spark_disconnect(sc = sc)
+#' }
 scala_list <- function(sc, x) {
   scala_seq(sc, x) %>%
     invoke("toList")
