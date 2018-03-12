@@ -33,7 +33,6 @@ test_that("Test that the standard error calculations are as expected", {
     output[["StandardError"]],
     expected_sdf_standard_error[["stdError"]]
   )
-
 })
 
 # Disconnect from the cluster

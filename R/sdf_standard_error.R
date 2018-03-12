@@ -43,9 +43,7 @@
 #' }
 #'
 #' @export
-sdf_standard_error <- function(
-  sc, data, x_col, y_col, z_col, new_column_name
-) {
+sdf_standard_error <- function(sc, data, x_col, y_col, z_col, new_column_name) {
   stopifnot(
     inherits(
       sc, c("spark_connection", "spark_shell_connection", "DBIConnection")

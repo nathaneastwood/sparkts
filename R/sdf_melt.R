@@ -46,9 +46,8 @@
 #' }
 #'
 #' @export
-sdf_melt <- function(
-  sc, data, id_variables, value_variables, variable_name, value_name
-) {
+sdf_melt <- function(sc, data, id_variables, value_variables, variable_name,
+                     value_name) {
   stopifnot(
     inherits(
       sc, c("spark_connection", "spark_shell_connection", "DBIConnection")
