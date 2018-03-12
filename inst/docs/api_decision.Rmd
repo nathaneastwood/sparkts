@@ -1,0 +1,194 @@
+---
+title: "API Decision"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#"
+)
+library(sparkts)
+```
+
+# Set up the data
+
+```{r connection}
+# Connect to spark
+sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
+```
+
+```{r data1}
+# Dataset 1
+std_data <- sparklyr::spark_read_json(
+  sc,
+  "std_data",
+  path = system.file(
+    "data_raw/StandardErrorDataIn.json",
+    package = "sparkts"
+  )
+) %>%
+  sparklyr::spark_dataframe()
+std_data %>% dplyr::collect()
+```
+
+```{r data2}
+# Dataset 2
+melt_data <- spark_read_json(
+  sc,
+  "melt_data",
+  path = system.file(
+    "data_raw/Melt.json",
+    package = "sparkts"
+  )
+) %>%
+  spark_dataframe()
+melt_data %>% dplyr::collect()
+```
+
+# Traditional R (S3 / Generics)
+
+Defining the function:
+
+```{r trad}
+se_trad <- function(sc, data, x_col, y_col, z_col, new_column_name) {
+  # Invoke the function
+  invoke_static(
+    sc = sc,
+    class = "com.ons.sml.businessMethods.methods.StandardError",
+    method = "standardError",
+    df = data
+  ) %>% 
+    invoke(
+      method = "stdErr1",
+      #df = data,
+      df = NULL,
+      xCol = x_col,
+      yCol = y_col,
+      zCol = z_col,
+      newColName = new_column_name
+    )
+}
+```
+
+Calling the function: 
+
+```{r callTrad}
+sdf_se1 <- se_trad(
+  sc, std_data, x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+  new_column_name = "StandardError"
+)
+sdf_se1 %>% dplyr::collect()
+```
+
+# R6
+
+```{r r6}
+utils <- R6::R6Class(
+  "utils",
+  private = list(
+    collect = function(data) {
+      dplyr::collect(data)
+    }
+  )
+)
+
+se_r6 <- R6::R6Class(
+  "se_r6",
+  inherit = utils,
+  public = list(
+    initialize = function(sc, data) {
+      init <- invoke_static(
+        sc = sc,
+        class = "com.ons.sml.businessMethods.methods.StandardError",
+        method = "standardError",
+        df = data
+      )
+      private$init <- init
+    },
+    standard_error = function(
+      data = NULL, x_col, y_col, z_col, new_column_name
+    ) {
+      private$init %>%
+        invoke(
+          method = "stdErr1",
+          df = data,
+          xCol = x_col,
+          yCol = y_col,
+          zCol = z_col,
+          newColName = new_column_name
+        ) %>%
+        private$collect()
+    }
+  ),
+  private = list(
+    init = NULL
+  )
+)
+```
+
+Calling the function:
+
+```{r callR6}
+# Instantiate the function
+p <- se_r6$new(sc = sc, data = std_data)
+
+# Call the standard error method
+output <- p$standard_error(
+  x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+  new_column_name = "StandardError"
+)
+
+output
+```
+
+We can call this a second time with a new dataset without instantiating the class again - just like Scala!
+
+```{r se}
+p$standard_error(
+  data = melt_data,
+  x_col = "one", y_col = "three", z_col = "two", new_column_name = "new_col"
+)
+```
+
+We can also use chaining
+
+```{r chaining}
+se_r6$
+  new(sc = sc, data = std_data)$
+  standard_error(
+    x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+    new_column_name = "StandardError"
+  )
+```
+
+# Pros and Cons
+
+Using generics (or S3) and R6 both have their pros and cons. Here is a quick look at them. See [here](https://adv-r.hadley.nz/oo-tradeoffs.html#s3-r6) for more details.
+
+## Generics
+
+Pros:
+
+* Simple
+* Widely used
+* Built on generic functions
+* It's a more traditional way of writing R code
+* Supported by Roxygen
+
+Cons:
+
+* Different API to Scala
+
+## R6
+
+Pros:
+
+* Built on encapsulated objects
+* Has references semantics (can be modified in place)
+
+Cons:
+
+* May feel unfamiliar to R users
+* Not well supported by Roxygen
