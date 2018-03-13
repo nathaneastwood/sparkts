@@ -46,8 +46,29 @@ tools::Rd2HTML("../../man/scala_list.Rd")
 
 This is linked to JIRA ticket [DAPS-433](https://collaborate2.ons.gov.uk/jira/browse/DAPS-433).
 
-# Building Expected Data Outputs
-## The Problem
+# Connecting to Spark
+## Cloudera Data Science Workbench [TO BE TESTED]
+
+In order to [connect to Spark on the Cloudera Data Science Workbench](https://blog.cloudera.com/blog/2017/09/how-to-distribute-your-r-code-with-sparklyr-and-cdsw/), the user must configure their connection using the `sparklyr` package. An example of this can be seen below.
+
+```{r sparkCloudera}
+library(sparklyr)
+ 
+config <- spark_config()
+config[["spark.r.command"]] <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/bin/Rscript"
+config$sparklyr.apply.env.R_HOME <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R"
+config$sparklyr.apply.env.RHOME <- "/opt/cloudera/parcels/CONDAR/lib/conda-R"
+config$sparklyr.apply.env.R_SHARE_DIR <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R/share"
+config$sparklyr.apply.env.R_INCLUDE_DIR <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R/include"
+ 
+sc <- spark_connect(master = "yarn-client", config = config)
+```
+
+This is linked to JIRA ticket [DAPS-450](https://collaborate2.ons.gov.uk/jira/browse/DAPS-450).
+
+# Testing
+## Building Expected Data Outputs
+### The Problem
 
 ```{r spark, cache = TRUE, include = FALSE}
 sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
@@ -110,9 +131,9 @@ expect_identical(
 )
 ```
 
-## Solution
+### Solution
 
-One way we can keep the full numeric data information is using hexadecimal (binary fractions) data. See `?deparseOpts` for more information.
+If you must use `dput`, one way we can keep the full numeric data information is using hexadecimal (binary fractions) data. See `?deparseOpts` for more information.
 
 ```{r expectedCorrect}
 expected_df <- dput(
@@ -130,3 +151,17 @@ expect_identical(
 ```
 
 If you don’t want to use hexadecimal units, for whatever reason, you can get away with using `expect_equal()` instead of `expect_identical()` which adds a tolerance to numerical value comparisons. See `?all.equal` for more information.
+
+You can always just import the data from a JSON file using `sparklyr`, however.
+
+```{r expectJSON, error = TRUE}
+expected_df_json <- sparklyr::spark_read_json(
+  sc,
+  "std_data",
+  path = system.file(
+    "path/to/jsonfile.json",
+    package = "sparkts"
+  )
+) %>%
+  sparklyr::spark_dataframe()
+```
