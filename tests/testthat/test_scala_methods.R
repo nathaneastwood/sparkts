@@ -1,4 +1,4 @@
-context("scala-methods")
+context("Test the Scala Methods")
 
 # Create the connection to a local spark cluster
 sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
@@ -16,22 +16,18 @@ test_that("Test that the standard error calculations are as expected", {
   ) %>%
     sparklyr::spark_dataframe()
 
-  # Instantiate the class
+  # Call the method
   output <- sdf_standard_error(
     sc = sc, data = std_data,
     x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
-    new_column_name = "StandardError"
+    new_column_name = "stdError"
   ) %>%
     dplyr::collect()
 
   # Test the expectation
   expect_identical(
-    output %>% dplyr::select(-dplyr::contains("Error")),
-    expected_sdf_standard_error %>% dplyr::select(-dplyr::contains("Error"))
-  )
-  expect_equivalent(
-    output[["StandardError"]],
-    expected_sdf_standard_error[["stdError"]]
+    output,
+    expected_sdf_standard_error
   )
 })
 

@@ -7,3 +7,4 @@ logs/
 ^README\.Rmd$
 ^README-.*\.png$
 README_cache/
+inst/doc/*

@@ -1,0 +1,97 @@
+---
+title: Building Expected Data Outputs
+output: github_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#"
+)
+
+library(sparkts)
+library(testthat)
+
+sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
+
+# Define the expected data
+expected_df <- structure(
+  list(
+    ref = c(
+      "000000000", "111111111", "222222222", 
+      "333333333", "444444444", "555555555", "666666666", "777777777"
+    ), 
+    xColumn = c(
+      "200", "300", "400", "500", "600", "700", "800", "900"), 
+    yColumn = c(120, 220, 320, 420, 520, 620, 720, 820), 
+    zColumn = c(10, 20, 30, 40, 53, 60, 70, 80), 
+    stdError = c(
+      10.5851224804993, 14.1156934648117, 16.7967753286756, 19.0703353574777, 
+      22.351729734926, 22.9194448813965, 24.6125909283282, 26.1943338370632)), 
+  .Names = c(
+    "ref", "xColumn", "yColumn", "zColumn", "stdError"), 
+  row.names = c(NA, -8L), 
+  class = c("tbl_df", "tbl", "data.frame")
+)
+
+# Read in the data
+std_data <- sparklyr::spark_read_json(
+  sc,
+  "std_data",
+  path = system.file(
+    "data_raw/StandardErrorDataIn.json",
+    package = "sparkts"
+  )
+) %>%
+  sparklyr::spark_dataframe()
+
+# Call the method
+output <- sdf_standard_error(
+  sc = sc, data = std_data,
+  x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+  new_column_name = "stdError"
+) %>%
+  dplyr::collect()
+```
+
+# The Problem
+
+You may see the following issue when testing:
+
+```{r fail, error = TRUE}
+expect_identical(
+  output,
+  expected_df
+)
+```
+
+If you use `dput` to generate your expected output, it doesn't store the full numeric data information. To prove this, rounding this information allows the test to pass:
+
+```{r round}
+expect_identical(
+  output %>% dplyr::mutate(stdError = round(stdError, 2)),
+  expected_df %>% dplyr::mutate(stdError = round(stdError, 2))
+)
+```
+
+# Solution
+
+One way we can keep the full numeric data information is using hexadecimal (binary fractions) data. See `?deparseOpts` for more information.
+
+```{r expectedCorrect}
+expected_df <- dput(
+  output, control = c("keepNA", "keepInteger", "showAttributes", "hexNumeric")
+)
+```
+
+Then when we compare the two datasets, we see no errors.
+
+```{r pass}
+expect_identical(
+  output,
+  expected_df
+)
+```
+
+If you don’t want to use hexadecimal units, for whatever reason, you can get away with using `expect_equal()` instead of `expect_identical()` which adds a tolerance to numerical value comparisons. See `?all.equal` for more information.
