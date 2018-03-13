@@ -7,10 +7,6 @@
 state and is being actively
 developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sparkts)](http://cran.r-project.org/package=sparkts)
-[![Travis-CI Build
-Status](https://travis-ci.org/nathaneastwood/sparkts.svg?branch=master)](https://travis-ci.org/nathaneastwood/sparkts)
-[![Coverage
-Status](https://img.shields.io/codecov/c/github/nathaneastwood/sparkts/master.svg)](https://codecov.io/github/nathaneastwood/sparkts?branch=master)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
