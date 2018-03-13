@@ -1,8 +1,6 @@
 Developing the Package
 ================
 
-\tableofcontents
-
 # Development Advice
 
 Developing this package further will require a working knowledge of
