@@ -17,3 +17,99 @@ expected_sdf_standard_error <- structure(
   row.names = c(NA, -8L),
   class = c("tbl_df", "tbl", "data.frame")
 )
+#Sum_col test data A
+expected_sdf_sum_col_df1 <- structure(
+  list(
+    Period = c(
+      "2015Q1",
+      "2015Q2",
+      "2015Q3",
+      "2015Q4",
+      "2015Q1",
+      "2015Q2",
+      "2015Q3",
+      "2015Q4",
+      "2015Q1",
+      "2015Q2",
+      "2015Q3",
+      "2015Q4",
+      "2015Q1",
+      "2015Q2",
+      "2015Q3",
+      "2015Q4",
+      "2015Q1",
+      "2015Q2",
+      "2015Q3",
+      "2015Q4"
+    ),
+    Region = c(
+      "England",
+      "England",
+      "England",
+      "England",
+      "Ireland",
+      "Ireland",
+      "Ireland",
+      "Ireland",
+      "N. Ireland",
+      "N. Ireland",
+      "N. Ireland",
+      "N. Ireland",
+      "Scotland",
+      "Scotland",
+      "Scotland",
+      "Scotland",
+      "Wales",
+      "Wales",
+      "Wales",
+      "Wales"
+    ),
+    sum_of_Sales_Rounded_GBP = c(
+      41415,
+      41475,
+      44250,
+      39910,
+      8801,
+      8385,
+      9555,
+      7303,
+      12832,
+      13890,
+      16032,
+      18570,
+      33540,
+      29752,
+      30872,
+      34396,
+      25317,
+      27627,
+      31062,
+      20820
+    )
+  ),
+  .Names = c("Period", "Region", "sum_of_Sales_Rounded_GBP"),
+  row.names = c(NA, -20L),
+  class = c("tbl_df", "tbl", "data.frame")
+)
+#Sum_col test data B
+expected_sdf_sum_col_df2 <-
+  structure(
+    list(
+      Department = c(
+        "Clothing",
+        "DIY",
+        "Electronics",
+        "Garden",
+        "Household",
+        "Jewellery",
+        "Toys"
+      ),
+      sum_of_Sales_Rounded_GBP = c(127080,
+                                   35418, 128560, 47032, 81634, 54910, 21170)
+    ),
+    .Names = c("Department",
+               "sum_of_Sales_Rounded_GBP"),
+    row.names = c(NA, -7L),
+    class = c("tbl_df",
+              "tbl", "data.frame")
+  )
