@@ -25,6 +25,8 @@ You can install `sparkts` from GitHub with:
 devtools::install_github("nathaneastwood/sparkts")
 ```
 
+# Building
+
 If you have cloned `sparkts` and wish to `build` it, you will need:
 
   - R (\>= 3.4.3)
@@ -36,15 +38,17 @@ development version of `sparklyr` due to bugs in the version available
 from CRAN):
 
 ``` r
-install.packages(c("dplyr", "R6", "devtools", "testthat", "covr"))
-devtools::install_github("rstudio/sparklyr")
-sparklyr::install_spark(version = "2.2.0")
+install.packages(c("dplyr", "devtools", "testthat", "covr"))
+source("https://raw.githubusercontent.com/r-lib/remotes/master/install-github.R")$value("r-lib/remotes")
+remotes::install_github("rstudio/sparklyr")
+sparklyr::spark_install(version = "2.2.0")
 ```
 
-Then opening the `sparkts.Rproj` file will give you access to the Build
-tab from which you can “Install and Restart” (or Ctrl + Shift + B for
-windows or Cmd + Shift + B for Mac). This will build the package,
-install it, retart R and load the package.
+You can then install the package using
+
+``` r
+devtools::build()
+```
 
 ## Example
 
