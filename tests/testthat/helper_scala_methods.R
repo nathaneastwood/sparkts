@@ -23,6 +23,63 @@ expected_sdf_standard_error <- structure(
   row.names = c(NA, -8L),
   class = c("tbl_df", "tbl", "data.frame")
 )
+
+expected_sdf_duplicate_marker <- structure(
+  list(
+    id = c(0x1p+0, 0x1p+1, 0x1p+0, 0x1p+0),
+    num = c(0x1p+2, 0x1p+2, 0x1p+2, 0x1.4p+2),
+    order = c(0x1p+0, 0x1p+0, 0x1p+1, 0x1.8p+1),
+    marker = c(1L, 0L, 0L, 1L)
+  ),
+  .Names = c("id", "num", "order", "marker"),
+  row.names = c(NA, -4L),
+  class = c("tbl_df", "tbl", "data.frame")
+)
+
+expected_sdf_lag <- structure(
+  list(
+    id = c(0x1p+1, 0x1p+1, 0x1p+0, 0x1p+0, 0x1p+0),
+    t = c(0x1p+0, 0x1p+1, 0x1p+0, 0x1p+1, 0x1.8p+1),
+    v = c(0x1.5p+4, 0x1.6p+4, 0x1.6p+3, 0x1.8p+3, 0x1.ap+3),
+    lagged1 = c(NaN, 0x1.5p+4, NaN, 0x1.6p+3, 0x1.8p+3),
+    lagged2 = c(NaN, NaN, NaN, NaN, 0x1.6p+3)
+  ),
+  .Names = c("id", "t", "v", "lagged1", "lagged2"),
+  row.names = c(NA, -5L),
+  class = c("tbl_df", "tbl", "data.frame")
+)
+
+expected_sdf_melt <- structure(
+  list(
+    identifier = c("qwer", "qwer", "qwer", "qwer",
+                   "qwer", "qwer", "qwer", "qwer",
+                   "tyui", "tyui", "tyui", "tyui",
+                   "opas", "opas", "opas", "opas",
+                   "dfgh", "dfgh", "dfgh", "dfgh",
+                   "jklz", "jklz", "jklz", "jklz"),
+    date = c("201702", "201702", "201702", "201702",
+             "201701", "201701", "201701", "201701",
+             "201701", "201701", "201701", "201701",
+             "201701", "201701", "201701", "201701",
+             "201701", "201701", "201701", "201701",
+             "201701", "201701", "201701", "201701"),
+    variable = c("two", "one", "three", "four", "two",
+                 "one", "three", "four", "two", "one",
+                 "three", "four", "two",
+                 "one", "three", "four", "two", "one", "three", "four", "two",
+                 "one", "three", "four"),
+    turnover = c(0x1.58p+5, 0x1.04p+6, 0x1.4p+3, 0x1.9p+5,
+                 0x1.58p+5, 0x1.04p+6, 0x1.4p+3, 0x1.9p+5,
+                 0x1.7p+4, 0x1.1p+5, 0x1.4p+4, 0x1.9p+5,
+                 0x1.08p+5, 0x1.7p+4, 0x1.ep+4, 0x1.9p+5,
+                 0x1.5p+4, 0x1p+5, 0x1.4p+5, 0x1.9p+5,
+                 0x1.3p+4, 0x1.48p+5, 0x1.9p+5, 0x1.9p+5)
+  ),
+  .Names = c("identifier", "date", "variable", "turnover"),
+  row.names = c(NA, -24L),
+  class = c("tbl_df", "tbl", "data.frame")
+)
+
 #Sum_col test data A
 expected_sdf_sum_col_df1 <- structure(list(
   Period = c(
