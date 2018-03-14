@@ -1,7 +1,7 @@
 Package: sparkts
 Title: Call Methods from the spark-ts Package
 Version: 0.0.3
-Authors@R: 
+Authors@R:
     person("Nathan", "Eastwood", email = "nathan.eastwood@icloud.com", 
            role = c("aut", "cre"))
 Description: This package is used for calling Scala methods from the spark-ts 
@@ -15,7 +15,10 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Suggests: 
+Suggests:
     covr,
     lintr,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

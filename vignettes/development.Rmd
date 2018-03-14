@@ -1,0 +1,185 @@
+---
+title: "Development Advice"
+author: "Nathan Eastwood"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#"
+)
+library(sparkts)
+library(testthat)
+```
+
+# Development Learning
+
+Developing this package further will require a working knowledge of several packages. Detailed below are several links to books, packages and vignettes.
+
+* Tools to make an R developer's life easier: [devtools](https://github.com/r-lib/devtools)
+* Keep your code and code documentation together using [Roxygen2](https://github.com/klutometis/roxygen): Check out the vignettes [here](https://cran.r-project.org/web/packages/roxygen2/)
+* Test your code with [testthat](https://github.com/r-lib/testthat)
+
+You can read about these tools and the wider R package development world in the [R Packages](http://r-pkgs.had.co.nz) book.
+
+Key functions to know about are:
+
+* devtools::document()
+* devtools::test()
+* devtools::check()
+* devtools::build()
+
+A very good (free) book on general R can be found [here](https://adv-r.hadley.nz).
+
+All of the packages I have mentioned come from the "[tidyverse](https://www.tidyverse.org)" which is a collection of packages that work very well together. A key package which works well with [sparklyr](http://spark.rstudio.com) is called [dplyr](http://dplyr.tidyverse.org). dplyr provides a grammar of data manipulation, providing a consistent set of verbs that solve the most common data manipulation challenges. It is the package to use for data manipulation in R and is R's version of the Python pandas library.
+
+# Generating HTML Documentation
+
+We can generate the HTML from an Rd file using the following code.
+
+```{r build_docs}
+tools::Rd2HTML("../man/scala_list.Rd")
+```
+
+This is linked to JIRA ticket [DAPS-433](https://collaborate2.ons.gov.uk/jira/browse/DAPS-433).
+
+# Connecting to Spark
+## Cloudera Data Science Workbench [TO BE TESTED]
+
+In order to [connect to Spark on the Cloudera Data Science Workbench](https://blog.cloudera.com/blog/2017/09/how-to-distribute-your-r-code-with-sparklyr-and-cdsw/), the user must configure their connection using the `sparklyr` package. An example of this can be seen below.
+
+```{r sparkCloudera, eval = FALSE}
+library(sparklyr)
+ 
+config <- spark_config()
+config[["spark.r.command"]] <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/bin/Rscript"
+config$sparklyr.apply.env.R_HOME <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R"
+config$sparklyr.apply.env.RHOME <- "/opt/cloudera/parcels/CONDAR/lib/conda-R"
+config$sparklyr.apply.env.R_SHARE_DIR <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R/share"
+config$sparklyr.apply.env.R_INCLUDE_DIR <- "/opt/cloudera/parcels/CONDAR/lib/conda-R/lib/R/include"
+ 
+sc <- spark_connect(master = "yarn-client", config = config)
+```
+
+This is linked to JIRA ticket [DAPS-450](https://collaborate2.ons.gov.uk/jira/browse/DAPS-450).
+
+# API
+## Naming Conventions
+
+The functions in this package generally begin with `sdf_*`. This stands for Spark DataFrame and is used for two reasons:
+
+1. It extends the same API used by the `sparklyr` package
+2. We are using Spark DataFrames and modifying them in place
+
+## Generics vs. R6
+
+A decision was made to use generic funtions (and possibly S3 classes where needed) over R6 classes since generics are more typical of the R code the end user will be used to. This is detailed more [here](https://github.com/nathaneastwood/sparkts/blob/ef306e978363e91bd414c1df417defcde1ffc443/inst/docs/api_decision.Rmd).
+
+# Testing
+## Building Expected Data Outputs
+### The Problem
+
+```{r spark, cache = TRUE, include = FALSE}
+sc <- sparklyr::spark_connect(master = "local", version = "2.2.0")
+
+# Define the expected data
+expected_df <- structure(
+  list(
+    ref = c(
+      "000000000", "111111111", "222222222", 
+      "333333333", "444444444", "555555555", "666666666", "777777777"
+    ), 
+    xColumn = c(
+      "200", "300", "400", "500", "600", "700", "800", "900"), 
+    yColumn = c(120, 220, 320, 420, 520, 620, 720, 820), 
+    zColumn = c(10, 20, 30, 40, 53, 60, 70, 80), 
+    stdError = c(
+      10.5851224804993, 14.1156934648117, 16.7967753286756, 19.0703353574777, 
+      22.351729734926, 22.9194448813965, 24.6125909283282, 26.1943338370632)), 
+  .Names = c(
+    "ref", "xColumn", "yColumn", "zColumn", "stdError"), 
+  row.names = c(NA, -8L), 
+  class = c("tbl_df", "tbl", "data.frame")
+)
+
+# Read in the data
+std_data <- sparklyr::spark_read_json(
+  sc,
+  "std_data",
+  path = system.file(
+    "data_raw/StandardErrorDataIn.json",
+    package = "sparkts"
+  )
+) %>%
+  sparklyr::spark_dataframe()
+
+# Call the method
+output <- sdf_standard_error(
+  sc = sc, data = std_data,
+  x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
+  new_column_name = "stdError"
+) %>%
+  dplyr::collect()
+```
+
+You may see the following issue when testing:
+
+```{r fail, error = TRUE}
+expect_identical(
+  output,
+  expected_df
+)
+```
+
+If you use `dput` to generate your expected output, it doesn't store the full numeric data information. To prove this, rounding this information allows the test to pass:
+
+```{r round}
+expect_identical(
+  output %>% dplyr::mutate(stdError = round(stdError, 2)),
+  expected_df %>% dplyr::mutate(stdError = round(stdError, 2))
+)
+```
+
+### Solution
+
+If you must use `dput`, one way we can keep the full numeric data information is using hexadecimal (binary fractions) data. See `?deparseOpts` for more information.
+
+```{r expectedCorrect}
+expected_df <- dput(
+  output, control = c("keepNA", "keepInteger", "showAttributes", "hexNumeric")
+)
+```
+
+Then when we compare the two datasets, we see no errors.
+
+```{r pass}
+expect_identical(
+  output,
+  expected_df
+)
+```
+
+If you don’t want to use hexadecimal units, for whatever reason, you can get away with using `expect_equal()` instead of `expect_identical()` which adds a tolerance to numerical value comparisons. See `?all.equal` for more information.
+
+You can always just import the data from a JSON file using `sparklyr`, however.
+
+```{r expectJSON, eval = FALSE}
+expected_df_json <- sparklyr::spark_read_json(
+  sc,
+  "std_data",
+  path = system.file(
+    "path/to/jsonfile.json",
+    package = "sparkts"
+  )
+) %>%
+  sparklyr::spark_dataframe()
+```
