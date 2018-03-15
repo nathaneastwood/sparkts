@@ -21,9 +21,10 @@ Returns a \code{jobj}
 }
 \description{
 This function will perform a function similar to a SQL Group By.
-It should be noted that it does not perform this identically to what you'd typically expect of an
-ANSI like SQL statement. A new column is added onto the returning data rather than automatically
-returning columns parameterised as part of the call. With this function you need to performa an additional
+It should be noted that it does not perform this identically to what you'd
+typically expect of an ANSI like SQL statement. A new column is added onto
+the returning data rather than automatically returning columns parameterised
+as part of the call. With this function you need to performa an additional
 select. Also only one SINGLE sum-by column can be used.
 }
 \examples{
