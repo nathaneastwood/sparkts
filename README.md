@@ -25,30 +25,8 @@ You can install `sparkts` from GitHub with:
 devtools::install_github("nathaneastwood/sparkts")
 ```
 
-# Building
-
-If you have cloned `sparkts` and wish to `build` it, you will need:
-
-  - R (\>= 3.4.3)
-  - RStudio
-  - RTools34
-
-You will then need to run the following commands (note we need the
-development version of `sparklyr` due to bugs in the version available
-from CRAN):
-
-``` r
-install.packages(c("dplyr", "devtools", "testthat", "covr"))
-source("https://raw.githubusercontent.com/r-lib/remotes/master/install-github.R")$value("r-lib/remotes")
-remotes::install_github("rstudio/sparklyr")
-sparklyr::spark_install(version = "2.2.0")
-```
-
-You can then install the package using
-
-``` r
-devtools::build()
-```
+For details on how to set up for further developing the package, please
+see the development vignette.
 
 ## Example
 
@@ -59,7 +37,11 @@ error for some time series data:
 library(sparkts)
 
 # Set up a spark connection
-sc <- spark_connect(master = "local", version = "2.2.0")
+sc <- sparklyr::spark_connect(
+  master = "local",
+  version = "2.2.0",
+  config = list(sparklyr.gateway.address = "127.0.0.1")
+)
 
 # Extract some data
 std_data <- spark_read_json(

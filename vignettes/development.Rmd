@@ -21,6 +21,74 @@ library(sparkts)
 library(testthat)
 ```
 
+# Set up
+
+NOTE: When cloning the repository to an on-network drive, you MUST clone it to the D drive; failure to do so will not allow you to build the package.
+
+## Software Dependencies
+
+### R
+
+If you have cloned `sparkts` and wish to `build` it, you will need:
+
+* R (>= 3.4.3)
+* RStudio
+* RTools34
+
+You will then need to run the following commands (note we need the development version of `sparklyr` due to bugs in the version available from CRAN):
+
+```{r build_infrastructure, eval = FALSE}
+install.packages(c("dplyr", "devtools", "testthat", "covr", "knitr", "rmarkdown"))
+source("https://raw.githubusercontent.com/r-lib/remotes/master/install-github.R")$value("r-lib/remotes")
+remotes::install_github("rstudio/sparklyr")
+```
+
+### Spark
+
+You also need to install Spark. On Windows machines you need to ensure your LOCALAPPDATA environment variable is set to the correct folder. First check if this is already set
+
+```{r localloc}
+Sys.getenv()["LOCALAPPDATA"]
+```
+
+If this is `NA`, set it with
+
+```{r localset}
+Sys.setenv(LOCALAPPDATA="C:/Users/username/AppData/Local")
+```
+
+Now Spark should install in the correct directory
+
+```{r spark_install, eval = FALSE}
+sparklyr::spark_install(version = "2.2.0")
+```
+
+You can check where Spark has installed with
+
+```{r spark_location, eval = FALSE}
+sparklyr::spark_install_dir()
+```
+
+#### Connecting to Spark
+
+Note that you may come across [firewall restrictions](https://github.com/rstudio/sparklyr/issues/1039#issuecomment-333586743) when trying to connect to Spark. To get around this we can use the localhost instead (assuming this isn't also blocked).
+
+```{r spark_connect, eval = FALSE}
+sc <- sparklyr::spark_connect(
+  master = "local",
+  version = "2.2.0",
+  config = list(sparklyr.gateway.address = "127.0.0.1")
+)
+```
+
+#### Building
+
+Once you have all of your dependencies correctly setup, you can then build and install the package using
+
+```{r build, eval = FALSE}
+devtools::build()
+```
+
 # Development Learning
 
 Developing this package further will require a working knowledge of several packages. Detailed below are several links to books, packages and vignettes.
@@ -149,7 +217,7 @@ expect_identical(
 )
 ```
 
-### Solution
+### Solution 1
 
 If you must use `dput`, one way we can keep the full numeric data information is using hexadecimal (binary fractions) data. See `?deparseOpts` for more information.
 
@@ -167,6 +235,8 @@ expect_identical(
   expected_df
 )
 ```
+
+### Solution 2
 
 If you don’t want to use hexadecimal units, for whatever reason, you can get away with using `expect_equal()` instead of `expect_identical()` which adds a tolerance to numerical value comparisons. See `?all.equal` for more information.
 
