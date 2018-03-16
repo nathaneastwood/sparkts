@@ -1,18 +1,20 @@
-#' Calculate the standard error
+#' This method will flag any duplicate records
 #'
-#' This function will add an extra column on to a Spark DataFrame containing the
-#' standard error.
+#' This method adds a column to a dataframe containing duplicate markers.
 #'
 #' @param sc A \code{spark_connection}.
 #' @param data A \code{jobj}: the Spark \code{DataFrame} on which to perform the
 #'   function.
-#' @param x_col A string. The column to be used as X in the calculation.
-#' @param y_col A string. The column to be used as Y in the calculation.
-#' @param z_col A string. The column to be used as Z in the calculation.
-#' @param new_column_name A string. This is what the standard error column is
-#'   called, it can be defaulted to "StandardError".
+#' @param part_col String(s). A vector of the column(s) to check for duplicates
+#'   within.
+#' @param ord_col String(s). A list of the column(s) to order by.
+#' @param new_column_name A string. This is what the duplicate marker column is
+#'   called, it can be defaulted to "duplicate".
 #'
-#' @return Returns a \code{jobj}.
+#' @return
+#' Returns a \code{jobj}.
+#' * 0 = Duplicate
+#' * 1 = Not a Duplicate
 #'
 #' @examples
 #' \dontrun{
@@ -20,20 +22,19 @@
 #' sc <- spark_connect(master = "local", version = "2.2.0")
 #'
 #' # Extract some data
-#' std_data <- spark_read_json(
+#' dup_data <- spark_read_json(
 #'   sc,
 #'   "std_data",
 #'   path = system.file(
-#'     "data_raw/StandardErrorDataIn.json",
+#'     "data_raw/DuplicateDataIn.json",
 #'     package = "sparkts"
 #'   )
 #' ) %>%
 #'   spark_dataframe()
 #'
 #' # Call the method
-#' p <- sdf_standard_error(
-#'   sc, std_data, x_col = "xColumn", y_col = "yColumn", z_col = "zColumn",
-#'   new_column_name = "StandardError"
+#' p <- sdf_duplicate_marker(
+#'   sc, dup_data, part_col = "order", ord_col = "marker"
 #' )
 #'
 #' # Return the data to R
@@ -43,16 +44,20 @@
 #' }
 #'
 #' @export
-sdf_duplicate_marker <- function(sc, data, partcol, ordcol, new_col1) {
+sdf_duplicate_marker <- function(sc,
+                                 data,
+                                 part_col,
+                                 ord_col,
+                                 new_column_name = "duplicate") {
   stopifnot(
     inherits(
       sc, c("spark_connection", "spark_shell_connection", "DBIConnection")
     )
   )
   stopifnot(inherits(data, c("spark_jobj", "shell_jobj")))
-  stopifnot(is.character(partcol), length(partcol) == 1)
-  stopifnot(is.character(ordcol), length(ordcol) == 1)
-  stopifnot(is.character(new_col1), length(new_col1) == 1)
+  stopifnot(is.character(part_col), length(part_col) == 1)
+  stopifnot(is.character(ord_col), length(ord_col) == 1)
+  stopifnot(is.character(new_column_name), length(new_column_name) == 1)
 
   invoke_static(
     sc = sc,
@@ -63,8 +68,8 @@ sdf_duplicate_marker <- function(sc, data, partcol, ordcol, new_col1) {
     invoke(
       method = "dm1",
       df = data,
-      partCol = scala_list(sc, partcol),
-      ordCol = scala_list(sc, ordcol),
-      new_col = new_col1
+      partCol = scala_list(sc, part_col),
+      ordCol = scala_list(sc, ord_col),
+      new_col = new_column_name
     )
 }
