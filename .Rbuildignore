@@ -2,9 +2,8 @@
 ^\.Rproj\.user$
 ^.*\.log$
 logs/
-^\.travis\.yml$
-^codecov\.yml$
 ^README\.Rmd$
 ^README-.*\.png$
 README_cache/
-inst/doc/*
+inst/docs
+inst/docs/*
